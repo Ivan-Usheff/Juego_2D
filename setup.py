@@ -37,11 +37,11 @@ while True:
         if pjData != None:
             if not isinstance(pjData,tuple):
 
-                from core.db.conexion import CargarPartida as cp
-                pjData = cp(pjData).Cargar()
-                from core.components.characters import Character as ch
+                from core.components.characters import Player as pr
                 tiles = {'X':18, 'Y':588, 'WIDTH':29, 'HEIGHT':47}
-                personaje = ch('cuerpo/modelo',tiles,(pjData[0][0]['X'],pjData[0][0]['Y']),pjData[0][0]['ID_CLASE'],pjData[0][0]['LVL'],pjData[0][0]['EXP'])
+                #personaje = pr('cuerpo/modelo',tiles,(pjData[0][0]['X'],pjData[0][0]['Y']),pjData[0][0]['ID_CLASE'],pjData[0][0]['LVL'],pjData[0][0]['EXP'])
+                personaje = pr(pjData)
+
 
                 from core.components.map import Map
                 mapa = Map(ventana,pjData[0][0]['MAPA_X'],pjData[0][0]['MAPA_Y'])
