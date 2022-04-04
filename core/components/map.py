@@ -4,6 +4,7 @@ from core.librerias.functions import relativeImportPath
 from .maps import mapa_mundi
 from core.db.conexion import Conexion
 from .components import Tiles,SpriteStand,Panel,Muro
+from .characters import Enemy
 
 class Map:
     def __init__(self,surface,x=2,y=2):
@@ -17,13 +18,14 @@ class Map:
 
     #setea las propiedades del mapa: nombre, caracteristicas, etc...
     def setMapProps(self) -> None:
+        print(dirMapas+mapa_mundi.mm[self.x][self.y])
         self.__module = relativeImportPath(dirMapas+mapa_mundi.mm[self.x][self.y]+'.py')
         self.map = self.__module.mapa
         self.nombre = self.__module.nombre
         self.characters = self.__module.characters
         self.miniMap = self.__module.mundi
         self.setMap()
-        self.setCharacters()
+        self.createCharacters()
 
     #setea el mapa con sus Sprites
     def setMap(self) -> None:
@@ -72,18 +74,21 @@ class Map:
             self.allSprites.append(ch['sprite'])
 
     #dibujo los personajes en la ventana
-    def drawCharacters(self) -> None:
+    def drawCharacters(self, cursor, sprite) -> None:
         for ch in self.characters:
             #self.surface.blit(ch['sprite'].sprite.image,ch['sprite'].sprite.rect)
             self.surface.blit(ch['sprite'].image,ch['sprite'].rect)
+            ch['sprite'].updateCharacter(self.surface, cursor, self.allSprites)
 
 
     #crear characters
-    def createCharacters(self,character) -> object:
-        if character['type'] == 'npc':
-            return self.createNPC(character)
-        if character['type'] == 'enemy':
-            return self.createEnemy(character)
+    def createCharacters(self) -> object:
+        for ch in self.characters:
+            if ch['type'] == 'npc':
+                ch['sprite'] = self.createNPC(ch)
+            if ch['type'] == 'enemy':
+                ch['sprite'] = self.createEnemy(ch)
+            self.allSprites.append(ch['sprite'])
 
     #setea self.characters['sprite'] como un NPC
     def createNPC(self,character) -> object:
@@ -91,7 +96,8 @@ class Map:
 
     #setea self.characters['sprite'] como un Enemy
     def createEnemy(self,character) -> object:
-        return SpriteStand(f"characters/{character['hoja']}",character['tile'],character['position'])
+        return Enemy(character['position'],character['class_id'],character['lvl'])
+        #return Enemy(f"characters/{character['class_id']}",character['position'],character['lvl'])
 
 
     #setear sprite del jugador
@@ -110,7 +116,7 @@ class Map:
         elif self.player.rect.y <= 0:
             change = True
             self.x = self.x - 1
-            self.player.rect.y = 50
+            self.player.rect.y = self.surface.height - 50
         elif self.player.rect.x >= self.surface.width - self.player.rect.width:
             change = True
             self.y = self.y + 1
@@ -118,7 +124,7 @@ class Map:
         elif self.player.rect.y >= self.surface.height - self.player.rect.height:
             change = True
             self.x = self.x + 1
-            self.player.rect.y = self.surface.height + 50
+            self.player.rect.y = 50
 
         if change:
             del self.__module
@@ -136,7 +142,7 @@ class Map:
     def draw(self,cursor=None,event=None) -> None:
         self.drawSurface()
         self.drawMap()
-        self.drawCharacters()
+        self.drawCharacters(cursor,self.allSprites)
         self.drawPlayer(cursor, event)
         self.changeMap()
 

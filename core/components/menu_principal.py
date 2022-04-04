@@ -16,12 +16,14 @@ class ButtonStart(OpcionSecundaria):
 
 
     def functionCreate(self) -> None:
-        con = CargarPartida(self.bInput.texto)
-        if self.n<1:
-            con.Crear()
-            print(self.bInput.texto)
-            self.n+=1
-            self.data = self.bInput.texto
+        try:
+            con = CargarPartida(self.bInput.texto)
+            if self.n<1:
+                con.Crear()
+                self.n+=1
+                self.data = self.bInput.texto
+        except:
+            print('Inserte un Nombre')
         self.start = True
 
 
@@ -82,19 +84,19 @@ class MenuPrincipal:
         self.canvasChild = Panel(self.surface,330,120,820,430)
         self.opcionSecundaria = None
     
-    def update(self,cursor,_event) -> None:
+    def update(self,cursor, input_event, _event) -> None:
         self.surface.blit(self.textSurface,(500,50))
         self.canvas.update()
-        self.buttonStart.update(cursor)
+        self.buttonStart.update(cursor, input_event)
         self.buttonLoad.update(cursor)
         self.buttonConfig.update(cursor)
         self.buttonCredits.update(cursor)
         self.buttonQuit.update(cursor)
-        self.showSecundario(cursor,_event)
+        self.showSecundario(cursor,input_event,_event)
 
-    def showSecundario(self,cursor,_event) -> None:
+    def showSecundario(self,cursor,input_event,_event) -> None:
         if self.opcionSecundaria != None:
-            self.opcionSecundaria.update(cursor,_event)
+            self.opcionSecundaria.update(cursor,input_event,_event)
 
     def functionQuit(self) -> None:
         self.opcionSecundaria = ButtonQuit(self.canvasChild)

@@ -1,7 +1,7 @@
 from core.components.components import Panel,Barra,BarraStats,BarraInferriro
 from core.config import pantallaAncho,pantallaAlto,colorBlackMiddleDark,colorBlackMiddleLight,colorBlackMiddle
 import pygame
-
+'''
 #Tamaño de pantalla
 ANCHO = 1200
 ALTO = 610
@@ -73,3 +73,43 @@ while ejecutando:
     pygame.display.flip()
 
 pygame.quit()
+
+'''
+import pygame
+
+from pygame.locals import * 
+from sys import exit
+
+pygame.init()
+
+screen = pygame.display.set_mode((640, 480), 0, 32)
+
+font = pygame.font.SysFont("arial", 32); 
+font_height = font.get_linesize()
+
+while True:
+
+    for event in pygame.event.get(): 
+        if event.type == QUIT: exit()
+
+    screen.fill((255, 255, 255))
+
+    pressed_key_text = []
+
+    pressed_keys = pygame.key.get_pressed()
+
+    y = font_height
+
+    for key_constant, pressed in enumerate(pressed_keys): 
+        if pressed:
+
+            key_name = pygame.key.name(key_constant)
+
+            text_surface = font.render(f"{key_name} pressed: {key_constant}", True, (0,0,0)) 
+            key = pressed_keys.index(1)
+            print(key)
+            print(pressed_keys[key_constant])
+            screen.blit(text_surface, (8, y))
+            y = font_height
+
+    pygame.display.update()

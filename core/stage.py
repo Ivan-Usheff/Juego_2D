@@ -1,47 +1,70 @@
-from .components.menu_principal import MenuPrincipal
+from pygame import event,time,quit,QUIT,display,init,K_ESCAPE,KEYDOWN,key
+import sys 
+
 
 class Stage:
     def __init__(self,window):
         self.window = window
-        self.setMenuPrincipal()
-        self.pj = ''
+        from .components.menu_principal import MenuPrincipal
+        self.menuPrincipal = MenuPrincipal(self.window)
+        self.pjData = None
+        self.mapa = None
+        self.event = key.get_pressed()
 
-    #setea show para que se muestre le menu princiapl al iniciar el juego
-    def setMenuPrincipal(self) -> None:
-        self.show = MenuPrincipal(self.window)
 
-    #muestra el Menu Principal
-    def updateMM(self,cursor,_event) -> None:
-        self.show.update(cursor,_event)
-        self.getStarted()
+    def updateMenuPrincipal(self, cursor, input_event, event):
+        self.menuPrincipal.update(cursor, input_event, event)
 
-    #consulta si en menu principal empieza con el juego
-    #y hace swich de la prop show
-    def getStarted(self) -> None:
-        if self.show.getStarted():
-            pjData = self.show.opcionSecundaria.data
-            print(pjData)
-            self.setGame(pjData)
+        
+    def createMapa(self):
+        from core.components.map import Map
+        self.mapa = Map(self.window,self.pjData[0][0]['MAPA_X'],self.pjData[0][0]['MAPA_Y'])
+        self.mapa.setPlayer(self.personaje)
+
+    def createPj(self):
+        from core.db.conexion import CargarPartida as cp
+        self.pjData = cp(self.pjData).Cargar()
+        from core.components.characters import Character as ch
+        tiles = {'X':18, 'Y':588, 'WIDTH':29, 'HEIGHT':47}
+        self.personaje = ch('cuerpo/modelo',tiles,(self.pjData[0][0]['X'],self.pjData[0][0]['Y']),self.pjData[0][0]['ID_CLASE'],self.pjData[0][0]['LVL'],self.pjData[0][0]['EXP'])
+
+    def createBarraInferiror(self):
+        from core.components.components import BarraInferriro as BI
+        self.barraInferiro = BI(self.window)
+
+    def createPanelStats(self):
+        pass
+
+    def createPanelInventario(self):
+        pass
+
+
+
+    def updateGame(self, cursor, _event):
+        self.mapa.draw(cursor,_event)
+        self.barraInferiro.update(self.personaje.exp,self.personaje.expMax,self.personaje.HP,self.personaje.HPMAX,self.personaje.ENE,self.personaje.ENEMAX)
 
     #seta el escenario para que empiece el juego
-    def setGame(self, pjData) -> None:
-        from .db.conexion import CargarPartida as cp
-        from .components.map import Map
-        from .components.characters import Character as ch
-        pjData = cp(pjData)
-        self.pj = pjData.Cargar()
-        tiles = {'X':18, 'Y':588, 'WIDTH':46, 'HEIGHT':47}
-        personaje = ch('cuerpo/modelo',tiles,(self.pj[0][0]['X'],self.pj[0][0]['Y']),self.pj[0][0]['ID_CLASE'],self.pj[0][0]['LVL'])
-        self.show = Map(self.window,self.pj[0][0]['MAPA_X'],self.pj[0][0]['MAPA_Y'])
-        self.show.setPlayer(personaje)
-
-    #muestra el juego
-    def updateGame(self,cursor,_event) -> None:
-        self.show.draw(cursor,_event)
+    def setGame(self) -> None:
+        self.createPj()
+        self.createMapa()
+        self.createBarraInferiror()
+        print(self.pjData[0][0])
 
     #comprueba la instacia de show y cambia el comportamiento
-    def update(self,cursor,_event) -> None:
-        if isinstance(self.show, MenuPrincipal):
-            self.updateMM(cursor,_event)
+    def update(self, cursor, input_event) -> None:
+        
+        if self.menuPrincipal and self.menuPrincipal.getStarted() != True:
+            self.updateMenuPrincipal(cursor, input_event, self.event)
+        elif self.mapa:
+            self.updateGame(cursor,self.event)
         else:
-            self.updateGame(cursor,_event)
+            if self.pjData != None:
+                if not isinstance(self.pjData,tuple):
+                    self.setGame()
+            elif self.pjData == None:
+                self.pjData = self.menuPrincipal.opcionSecundaria.data
+                
+            if self.event[K_ESCAPE]:
+                quit()
+                sys.exit()

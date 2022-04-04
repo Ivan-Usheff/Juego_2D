@@ -28,14 +28,17 @@ mapa = [
 
 
 #todos los personajes que estan en el mapa
-characters = [{
-                'type' : 'enemy',
-                'nombre' : 'Un Enemigo',
-                'hoja' : 'enemigo_1',
-                'position' : (212,265),
-                'tile' : {'X':0,'Y':448,'WIDTH':62,'HEIGHT':66},
-                'sprite' : ''
-            },]
+characters = [
+    {
+        'type' : 'enemy',
+        'nombre' : 'Un Enemigo',
+        'class_id' : 1,
+        'position' : (212,265),
+        'tile' : {'X':0,'Y':448,'WIDTH':62,'HEIGHT':66},
+        'lvl' : 1,
+        'sprite' : ''
+    },
+]
             
 #mini mapa del mapa
 mundi=[

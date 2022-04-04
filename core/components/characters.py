@@ -3,6 +3,7 @@ from core.db.conexion import Conexion as cn
 from core.config import LVLMAX,MOD
 from math import floor,ceil
 import pygame as py
+from numpy import random
 
 class Ente():
     def __init__(self,hoja,tile) -> None:
@@ -155,9 +156,6 @@ class Character(SpriteMobile):
             return False
         '''
 
-        
-
-
     #eventos de teclado/mouse
     def handleEvent(self, cursor, sprite) -> None:
         
@@ -207,16 +205,56 @@ class Character(SpriteMobile):
             self.updateSprite(sprite, self.direction, self.accion)
 
 class Enemy(Character):
-    def __init__(self,id,lvl):
-        self.id = id
-        super().__init__(self.SPRITE,self.tile,self.classID,lvl)
+    #def __init__(self,id,lvl):
+    def __init__(self, position, classId, lvl):
+        self.position = position
+        self.tile = {'X':12,'Y':590,'WIDTH':43,'HEIGHT':50}
+        self.setEnemyData(classId)
+        #super().__init__(self.SPRITE,self.tile,self.classID,lvl)
+        super().__init__(f"characters/{self.SPRITE}", self.tile, self.position, self.classID, lvl)
 
-    def setEnemyData(self):
+
+    def setEnemyData(self, id):
         con = cn()
-        data = con.getDatosById('ENEMIGOS',self.id)
+        data = con.getDatosById('ENEMIGOS',id)
         self.classID = data['ID_CLASE']
         self.NOMBRE = data['NOMBRE']
         self.SPRITE = data['SPRITE']
         self.DIALOGO = data['DIALOGO']
         self.EXP = data['EXP']
 
+    def handleEvent(self, cursor, sprite):
+        
+        self.moveEvent()
+        self.distancia = floor(self.SPE)
+        distancia = self.distancia
+        
+                
+        if self.move:
+            self.updateSprite(sprite, self.direction, self.accion, distancia, self.velocidad)
+        else:
+            self.updateSprite(sprite, self.direction, self.accion)
+
+        '''
+        if event[py.K_SPACE]:
+            self.accion = 'atack_sword'
+            velAtak = ceil((LVLMAX-self.LVL) - self.AGI / MOD)
+            distancia = 0
+            self.updateSprite(sprite, self.direction, self.accion, distancia, velAtak)
+        '''
+            
+
+    def moveEvent(self) -> None:
+        move = random.randint(100)
+        if move <= 49:
+            self.move = False
+        else:
+            self.move = True
+            self.accion = 'move'
+            self.setDirection()
+            py.time.delay(random.randint(1000,3000))
+        print(move)
+
+    def setDirection(self):
+        listDirections = ['left','right','up','down']
+        self.direccion = listDirections[random.randint(0,len(listDirections)-1)]

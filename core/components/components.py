@@ -221,7 +221,7 @@ class TextBoton(py.Rect):
     def colorClick(self) -> None:
         self.color = colorComponentClick
 
-    def update(self, cursor, event=None) -> None:
+    def update(self, cursor, event = None, input_event = None) -> None:
         self.draw()
         self.cursor = cursor
         py.event.pump()
@@ -285,20 +285,23 @@ class Input(py.Rect):
         self.color = self.color_normal
         self.clic = False
 
-    def update(self, cursor, event):
+    def update(self, cursor, input_event, _event):
+        self.mouse_event = py.mouse.get_pressed()
         self.draw()
         self.colicion = cursor.colliderect(self.rectangulo)
 
-        self.changeColor(event)
-        self.setInput(event)
+        self.changeColor(input_event)
+        self.setInput( input_event)
 
         self.texto_show = self.fuente.render(self.texto, True, colorWhite)
 
     def changeColor(self, event):
-        if self.colicion and event.type == py.MOUSEBUTTONDOWN and event.button == 1:
+        if self.colicion and event.type == py.MOUSEBUTTONDOWN and self.mouse_event[0]:
             self.click()
-        elif not self.colicion and event.type == py.MOUSEBUTTONUP and event.button == 1:
+        elif not self.colicion and event.type == py.MOUSEBUTTONUP and self.mouse_event[0]:
             self.normal()
+        else:
+            pass
 
     def setInput(self, event):
         if self.clic:
@@ -333,10 +336,10 @@ class OpcionSecundaria:
         self.start = False
         self.data = ''
 
-    def update(self, cursor, event) -> None:
+    def update(self, cursor, input_event, event) -> None:
         self.surface.update()
         for sub in self.subcomps:
-            sub.update(cursor, event)
+            sub.update(cursor, input_event, event)
 
 
 class Tiles(py.sprite.Sprite):
