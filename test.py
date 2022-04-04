@@ -1,4 +1,5 @@
-from core.components.components import Panel,Barra,BarraStats,BarraInferriro
+from core.components.components import Panel,BarraInferriro
+from core.components.characters import Player
 from core.config import pantallaAncho,pantallaAlto,colorBlackMiddleDark,colorBlackMiddleLight,colorBlackMiddle
 import pygame
 '''
@@ -30,12 +31,14 @@ clock = pygame.time.Clock()
 barraInferior = BarraInferriro(pantalla)
 mapa = Panel(pantalla, pantallaAncho/2 - 800/2, 2, 800, 525, colorBlackMiddle)
 
-EXPactual = 239
-EXPmax = 1000
-HPactual = 100
-HPmax = 268
-ENEactual = 65
-ENEmax = 3267
+pj = Player('Ushoa')
+
+EXPactual = pj.exp
+EXPmax = pj.expMax
+HPactual = pj.HP
+HPmax = pj.HPMAX
+ENEactual = pj.ENE
+ENEmax = pj.ENEMAX
 
 
 
@@ -65,7 +68,10 @@ while ejecutando:
 
     # Fondo de pantalla, dibujo de sprites y formas geométricas.
     pantalla.fill(AZUL)
-    barraInferior.update(ENEactual, ENEmax, EXPactual, EXPmax, HPactual, HPmax)
+
+
+
+    barraInferior.update(EXPactual, EXPmax, ENEactual, ENEmax, HPactual, HPmax)
     mapa.update()
     #pygame.draw.rect(contENE, BLANCO, (10, 10, 50, 50), border_radius = 90)
     

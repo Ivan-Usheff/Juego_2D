@@ -20,12 +20,11 @@ class NPC(Ente):
 
 
 class Character(SpriteMobile):
-    def __init__(self, hoja, tile, position, classId, lvl, exp = 0) -> None:
+    def __init__(self, hoja, tile, position, classId, lvl) -> None:
         super().__init__(hoja,tile,position)
         self.classId = classId
 
         self.LVL = int(lvl)
-        self.exp = int(exp)
         self.expMax = 100
         self.setMOD()
         self.setExpMax()
@@ -158,6 +157,44 @@ class Character(SpriteMobile):
 
     #eventos de teclado/mouse
     def handleEvent(self, cursor, sprite) -> None:
+        pass
+
+class Enemy(Character):
+    def __init__(self,id,lvl):
+        self.id = id
+        super().__init__(self.SPRITE,self.tile,self.classID,lvl)
+
+    def setEnemyData(self):
+        con = cn()
+        data = con.getDatosById('ENEMIGOS',self.id)
+        self.classID = data['ID_CLASE']
+        self.NOMBRE = data['NOMBRE']
+        self.SPRITE = data['SPRITE']
+        self.DIALOGO = data['DIALOGO']
+        self.EXP = data['EXP']
+
+
+class Player(Character):
+    def __init__(self, db) -> None:
+        self.db= db
+        #super().__init__(hoja, tile, position, classId, lvl, exp)
+        self.getPlayer()
+        tiles = {'X':18, 'Y':588, 'WIDTH':29, 'HEIGHT':47}
+        super().__init__('cuerpo/modelo', tiles, (self.stats['X'], self.stats['Y']), self.stats['ID_CLASE'], self.stats['LVL'])
+
+
+    def getPlayer(self):
+        from core.db.conexion import CargarPartida as cp
+        pjData = cp(self.db).Cargar()
+        self.stats = pjData[0][0].copy()
+        self.invt = pjData[1][0].copy()
+
+        self.exp = self.stats['EXP']
+
+
+    
+
+    def handle_event(self, cursor, sprite) -> None:
         
         event = py.key.get_pressed()
         mouse_event = py.mouse.get_pressed()
@@ -202,6 +239,7 @@ class Character(SpriteMobile):
         if self.accion != 'stand':
             self.updateSprite(sprite, self.direction, self.accion, distancia, self.velocidad)
         else:
+<<<<<<< HEAD
             self.updateSprite(sprite, self.direction, self.accion)
 
 class Enemy(Character):
@@ -258,3 +296,6 @@ class Enemy(Character):
     def setDirection(self):
         listDirections = ['left','right','up','down']
         self.direccion = listDirections[random.randint(0,len(listDirections)-1)]
+=======
+            self.updateSprite(sprite, self.direction, self.accion)
+>>>>>>> 829db90e465c1c20e0e48e054576335ea2382c59
