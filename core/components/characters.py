@@ -239,7 +239,6 @@ class Player(Character):
         if self.accion != 'stand':
             self.updateSprite(sprite, self.direction, self.accion, distancia, self.velocidad)
         else:
-<<<<<<< HEAD
             self.updateSprite(sprite, self.direction, self.accion)
 
 class Enemy(Character):
@@ -296,6 +295,3 @@ class Enemy(Character):
     def setDirection(self):
         listDirections = ['left','right','up','down']
         self.direccion = listDirections[random.randint(0,len(listDirections)-1)]
-=======
-            self.updateSprite(sprite, self.direction, self.accion)
->>>>>>> 829db90e465c1c20e0e48e054576335ea2382c59

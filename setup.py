@@ -26,9 +26,6 @@ while True:
         
     #LLAMADAS A FUNCIONALIDADES DEL JUEGO {
 
-<<<<<<< HEAD
-    stage.update(cursor, input_event)
-=======
     if menuPrincipal.getStarted() != True:
         menuPrincipal.update(cursor,_event)
     else:
@@ -59,7 +56,6 @@ while True:
         if _event.type == KEYDOWN and _event.key == K_ESCAPE:
             quit()
             sys.exit()
->>>>>>> 829db90e465c1c20e0e48e054576335ea2382c59
     
     # }
 
