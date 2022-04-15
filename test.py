@@ -1,8 +1,8 @@
 from core.components.components import Panel,BarraInferriro
 from core.components.characters import Player
+from core.components.components import Cursor as cr
 from core.config import pantallaAncho,pantallaAlto,colorBlackMiddleDark,colorBlackMiddleLight,colorBlackMiddle
 import pygame
-'''
 #Tamaño de pantalla
 ANCHO = 1200
 ALTO = 610
@@ -23,22 +23,17 @@ H_50D2FE = (94,210,254)
 # Inicialización de Pygame, creación de la ventana, título y control de reloj.
 pygame.init()
 pantalla = pygame.display.set_mode((ANCHO, ALTO))
+cursor = cr()
 pygame.display.set_caption("Trabajando con sprites")
 clock = pygame.time.Clock()
 
 #cl = Circulo(pantalla, 50, 50, 50, 50, colorBlack, 90)
 
-barraInferior = BarraInferriro(pantalla)
-mapa = Panel(pantalla, pantallaAncho/2 - 800/2, 2, 800, 525, colorBlackMiddle)
 
 pj = Player('Ushoa')
-
-EXPactual = pj.exp
-EXPmax = pj.expMax
-HPactual = pj.HP
-HPmax = pj.HPMAX
-ENEactual = pj.ENE
-ENEmax = pj.ENEMAX
+from core.components.map import Map
+mapa = Map(pantalla,pj.stats['MAPA_X'],pj.stats['MAPA_Y'])
+mapa.setPlayer(pj)
 
 
 
@@ -55,15 +50,6 @@ while ejecutando:
             ejecutando = False
         
     event = pygame.key.get_pressed()
-
-    if event[pygame.K_LEFT]:
-        HPactual -= 5
-    elif event[pygame.K_RIGHT]:
-        HPactual += 5
-    elif event[pygame.K_UP]:
-        HPmax += 5
-    elif event[pygame.K_DOWN]:
-        HPmax -= 5
         
 
     # Fondo de pantalla, dibujo de sprites y formas geométricas.
@@ -71,8 +57,7 @@ while ejecutando:
 
 
 
-    barraInferior.update(EXPactual, EXPmax, ENEactual, ENEmax, HPactual, HPmax)
-    mapa.update()
+    mapa.draw(cursor,event)
     #pygame.draw.rect(contENE, BLANCO, (10, 10, 50, 50), border_radius = 90)
     
     # Actualiza el contenido de la pantalla.
@@ -119,3 +104,4 @@ while True:
             y = font_height
 
     pygame.display.update()
+'''

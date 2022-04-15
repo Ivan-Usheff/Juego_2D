@@ -20,8 +20,8 @@ class NPC(Ente):
 
 
 class Character(SpriteMobile):
-    def __init__(self, hoja, tile, position, classId, lvl) -> None:
-        super().__init__(hoja,tile,position)
+    def __init__(self, hoja, tile, position, classId, lvl, fps) -> None:
+        super().__init__(hoja,tile,position, fps)
         self.classId = classId
 
         self.LVL = int(lvl)
@@ -125,7 +125,7 @@ class Character(SpriteMobile):
     #actualizar estados acciones del jugafdor
     def updateCharacter(self, surface, cursor, sprite = []) -> None:
         self.draw(surface)
-        self.handleEvent(cursor, sprite)
+        self.handle_event(cursor, sprite)
 
     #dibujar personaje
     def draw(self,surface) -> None:
@@ -156,13 +156,13 @@ class Character(SpriteMobile):
         '''
 
     #eventos de teclado/mouse
-    def handleEvent(self, cursor, sprite) -> None:
+    def handle_event(self, cursor, sprite) -> None:
         pass
 
 class Enemy(Character):
-    def __init__(self,id,lvl):
+    def __init__(self,id,lvl,fps):
         self.id = id
-        super().__init__(self.SPRITE,self.tile,self.classID,lvl)
+        super().__init__(self.SPRITE,self.tile,self.classID,lvl,fps)
 
     def setEnemyData(self):
         con = cn()
@@ -175,23 +175,22 @@ class Enemy(Character):
 
 
 class Player(Character):
-    def __init__(self, db) -> None:
+    def __init__(self, db, fps) -> None:
         self.db= db
         #super().__init__(hoja, tile, position, classId, lvl, exp)
         self.getPlayer()
         tiles = {'X':18, 'Y':588, 'WIDTH':29, 'HEIGHT':47}
-        super().__init__('cuerpo/modelo', tiles, (self.stats['X'], self.stats['Y']), self.stats['ID_CLASE'], self.stats['LVL'])
+        super().__init__('cuerpo/modelo', tiles, (self.stats['X'], self.stats['Y']), self.stats['ID_CLASE'], self.stats['LVL'], fps)
 
 
     def getPlayer(self):
         from core.db.conexion import CargarPartida as cp
         pjData = cp(self.db).Cargar()
+        
         self.stats = pjData[0][0].copy()
         self.invt = pjData[1][0].copy()
 
         self.exp = self.stats['EXP']
-
-
     
 
     def handle_event(self, cursor, sprite) -> None:
@@ -203,7 +202,6 @@ class Player(Character):
         self.distancia = floor(self.SPE)
         distancia = self.distancia
         
-                
         if event[py.K_LEFT]:
             self.direction = 'left'
             self.accion = 'move'
@@ -243,12 +241,12 @@ class Player(Character):
 
 class Enemy(Character):
     #def __init__(self,id,lvl):
-    def __init__(self, position, classId, lvl):
+    def __init__(self, position, classId, lvl, fps):
         self.position = position
         self.tile = {'X':12,'Y':590,'WIDTH':43,'HEIGHT':50}
         self.setEnemyData(classId)
         #super().__init__(self.SPRITE,self.tile,self.classID,lvl)
-        super().__init__(f"characters/{self.SPRITE}", self.tile, self.position, self.classID, lvl)
+        super().__init__(f"characters/{self.SPRITE}", self.tile, self.position, self.classID, lvl, fps)
 
 
     def setEnemyData(self, id):
@@ -289,8 +287,7 @@ class Enemy(Character):
             self.move = True
             self.accion = 'move'
             self.setDirection()
-            py.time.delay(random.randint(1000,3000))
-        print(move)
+            #py.time.delay(random.randint(1000,3000))
 
     def setDirection(self):
         listDirections = ['left','right','up','down']

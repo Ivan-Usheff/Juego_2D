@@ -84,7 +84,7 @@ class MenuPrincipal:
         self.canvasChild = Panel(self.surface,330,120,820,430)
         self.opcionSecundaria = None
     
-    def update(self,cursor, input_event, _event) -> None:
+    def update(self,cursor, input_event, _event = None) -> None:
         self.surface.blit(self.textSurface,(500,50))
         self.canvas.update()
         self.buttonStart.update(cursor, input_event)
@@ -92,11 +92,11 @@ class MenuPrincipal:
         self.buttonConfig.update(cursor)
         self.buttonCredits.update(cursor)
         self.buttonQuit.update(cursor)
-        self.showSecundario(cursor,input_event,_event)
+        self.showSecundario(cursor,input_event)
 
-    def showSecundario(self,cursor,input_event,_event) -> None:
+    def showSecundario(self,cursor,input_event) -> None:
         if self.opcionSecundaria != None:
-            self.opcionSecundaria.update(cursor,input_event,_event)
+            self.opcionSecundaria.update(cursor,input_event)
 
     def functionQuit(self) -> None:
         self.opcionSecundaria = ButtonQuit(self.canvasChild)

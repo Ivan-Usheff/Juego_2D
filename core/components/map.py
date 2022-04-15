@@ -7,9 +7,10 @@ from .components import Tiles,SpriteStand,Panel,Muro
 from .characters import Enemy
 
 class Map:
-    def __init__(self,surface,x=2,y=2):
+    def __init__(self,surface,x=2,y=2, time=0):
         self.x = x # x del mapamundi
         self.y = y # y del mapamundi
+        self.time = time
         self.characters = {}
         self.allSprites = []
         self.setMapProps()
@@ -92,11 +93,11 @@ class Map:
 
     #setea self.characters['sprite'] como un NPC
     def createNPC(self,character) -> object:
-        return SpriteStand(f"characters/{character['hoja']}",character['tile'],character['position'])
+        return SpriteStand(f"characters/{character['hoja']}",character['tile'],character['position'],self.time)
 
     #setea self.characters['sprite'] como un Enemy
     def createEnemy(self,character) -> object:
-        return Enemy(character['position'],character['class_id'],character['lvl'])
+        return Enemy(character['position'],character['class_id'],character['lvl'],self.time)
         #return Enemy(f"characters/{character['class_id']}",character['position'],character['lvl'])
 
 
@@ -142,7 +143,7 @@ class Map:
     def draw(self,cursor=None,event=None) -> None:
         self.drawSurface()
         self.drawMap()
-        self.drawCharacters(cursor,self.allSprites)
+        #self.drawCharacters(cursor,self.allSprites)
         self.drawPlayer(cursor, event)
         self.changeMap()
 

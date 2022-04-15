@@ -1,17 +1,18 @@
 from core.components.components import Cursor as cr
+from core.components.menu_principal import MenuPrincipal
 from core.config import ventana,colorBG
-from core.stage import Stage as st
-from pygame import event,time,quit,QUIT,display,init
+from pygame import event,time,quit,QUIT,KEYDOWN,K_ESCAPE,display,init
 import sys 
 
-init()
 
-fps=time.Clock()
+fps = time.Clock()
 cursor = cr()
+menuPrincipal = MenuPrincipal(ventana)
+pjData = None
+mapa = None
+personaje = None
 
-stage = st(ventana)
-
-
+init()
 
 while True:
     ventana.fill(colorBG)
@@ -27,35 +28,40 @@ while True:
     #LLAMADAS A FUNCIONALIDADES DEL JUEGO {
 
     if menuPrincipal.getStarted() != True:
-        menuPrincipal.update(cursor,_event)
-    else:
+
+        menuPrincipal.update(cursor,input_event)
+    
+    elif not mapa and not personaje:
+    
         if pjData != None:
+            
             if not isinstance(pjData,tuple):
 
                 from core.components.characters import Player as pr
                 tiles = {'X':18, 'Y':588, 'WIDTH':29, 'HEIGHT':47}
-                #personaje = pr('cuerpo/modelo',tiles,(pjData[0][0]['X'],pjData[0][0]['Y']),pjData[0][0]['ID_CLASE'],pjData[0][0]['LVL'],pjData[0][0]['EXP'])
-                personaje = pr(pjData)
+                personaje = pr(pjData, fps)
 
 
                 from core.components.map import Map
-                mapa = Map(ventana,pjData[0][0]['MAPA_X'],pjData[0][0]['MAPA_Y'])
+                mapa = Map(ventana,personaje.stats['MAPA_X'],personaje.stats['MAPA_Y'],fps)
                 mapa.setPlayer(personaje)
                 
                 from core.components.components import BarraInferriro as BI
                 barraInferiro = BI(ventana)
 
-                print(pjData[0][0])
         elif pjData == None:
+    
             pjData = menuPrincipal.opcionSecundaria.data
+    
+    else:
 
-        if mapa:
-            mapa.draw(cursor,_event)
-            barraInferiro.update(personaje.exp,personaje.expMax,personaje.HP,personaje.HPMAX,personaje.ENE,personaje.ENEMAX)
-            
-        if _event.type == KEYDOWN and _event.key == K_ESCAPE:
-            quit()
-            sys.exit()
+        mapa.draw(cursor,input_event)
+        barraInferiro.update(personaje.exp,personaje.expMax,personaje.HP,personaje.HPMAX,personaje.ENE,personaje.ENEMAX)
+        
+    if input_event.type == KEYDOWN and input_event.key == K_ESCAPE:
+
+        quit()
+        sys.exit()
     
     # }
 

@@ -285,7 +285,7 @@ class Input(py.Rect):
         self.color = self.color_normal
         self.clic = False
 
-    def update(self, cursor, input_event, _event):
+    def update(self, cursor, input_event):
         self.mouse_event = py.mouse.get_pressed()
         self.draw()
         self.colicion = cursor.colliderect(self.rectangulo)
@@ -336,10 +336,10 @@ class OpcionSecundaria:
         self.start = False
         self.data = ''
 
-    def update(self, cursor, input_event, event) -> None:
+    def update(self, cursor, input_event) -> None:
         self.surface.update()
         for sub in self.subcomps:
-            sub.update(cursor, input_event, event)
+            sub.update(cursor, input_event)
 
 
 class Tiles(py.sprite.Sprite):
@@ -368,15 +368,19 @@ class SpriteStand(Tiles):
 
 
 class SpriteMobile(Tiles):
-    def __init__(self, hoja, tiles, position):
+    def __init__(self, hoja, tiles, position, tiempo):
         super().__init__(hoja, tiles)
         self.rect.topleft = position
         self.frame = 0
 
-        self.tiempo = 0
+        self.tiempo = tiempo
+        self.moveCollDown = 0
+        self.atackCollDown = 0
+        self.defCollDown = 0
         self.distancia = 0
         self.direccion = ['left', 'right', 'up', 'down']
         self.dir = 'left'
+
 
         self.debug = py.Surface(
             (self.rect.width, self.rect.height), py.SRCALPHA)   # per-pixel alpha
@@ -418,6 +422,15 @@ class SpriteMobile(Tiles):
         #    self.hoja.set_clip(py.Rect(clipped_rect))
         return clipped_rect
 
+    def moveCollDownFun(self, time) -> bool:
+        self.moveCollDown += self.tiempo.get_time()
+        print(time)
+        if self.moveCollDown >= time:
+            self.moveCollDown = 0
+            return True
+        return False
+
+
     def updateSprite(self, sprite, direction, accion, distancia=0, velocidad=None) -> None:
         self.clip(self.moves[direction][accion])
         y = 0
@@ -440,11 +453,11 @@ class SpriteMobile(Tiles):
                 #self.rect.y += distancia
                 y += distancia
 
-        if self.checkColition(sprite, x, y) == False:
-            self.update(x, y)
+        #self.moveCollDownFun(velocidad)
 
-        if velocidad:
-            py.time.delay(velocidad)
+        if self.checkColition(sprite, x, y) == False and velocidad != None and self.moveCollDownFun(velocidad):
+            print(velocidad)
+            self.update(x, y)
 
         self.image = self.hoja.subsurface(self.hoja.get_clip())
 
